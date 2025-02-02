@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mixed Numbers to Improper Fractions</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 10px;
+    }
+    .choices {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .choice {
+      padding: 10px 20px;
+      border: 2px solid black;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 18px;
+      background-color: #fff;
+      transition: background-color 0.3s;
+    }
+    .choice:hover {
+      background-color: #f0f0f0;
+    }
+    .correct {
+      background-color: lightgreen !important;
+    }
+    .incorrect {
+      background-color: lightcoral !important;
+    }
+    .visual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .line {
+      display: flex;
+      border: 2px solid black;
+      height: 30px;
+      width: 200px;
+      margin: 0 auto;
+    }
+    .segment {
+      flex: 1;
+      border-right: 1px solid black;
+      background-color: white;
+    }
+    .segment:last-child {
+      border-right: none;
+    }
+    #question {
+      font-size: 22px;
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mixed Numbers to Improper Fractions</h1>
+  <div id="question"></div>
+  <div class="visual" id="visual"></div>
+  <div class="choices" id="choices"></div>
+
+  <script>
+    function generateQuestion() {
+      var whole = Math.floor(Math.random() * 5) + 1;
+      var denominator = Math.floor(Math.random() * 5) + 2;
+      var numerator = Math.floor(Math.random() * (denominator - 1)) + 1;
+      var correctFraction = (whole * denominator + numerator) + "/" + denominator;
+
+      document.getElementById("question").innerHTML =
+        "Convert <b>" + whole + " " + numerator + "/" + denominator + "</b> to an improper fraction:";
+
+      generateVisual(whole, numerator, denominator);
+
+      var choices = [];
+      choices.push(correctFraction);
+
+      while (choices.length < 4) {
+        var offset = Math.floor(Math.random() * 7) - 3;
+        var newNumerator = (whole * denominator + numerator) + offset;
+        if (newNumerator > 0) {
+          var wrong = newNumerator + "/" + denominator;
+          if (choices.indexOf(wrong) === -1) {
+            choices.push(wrong);
+          }
+        }
+      }
+
+      shuffleArray(choices);
+
+      var choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+
+      for (var i = 0; i < choices.length; i++) {
+        var choice = choices[i];
+        var btn = document.createElement("div");
+        btn.className = "choice";
+        btn.innerHTML = choice;
+        btn.onclick = (function(selected, correct) {
+          return function() {
+            if (selected === correct) {
+              this.classList.add("correct");
+              setTimeout(generateQuestion, 1000);
+            } else {
+              this.classList.add("incorrect");
+            }
+          };
+        })(choice, correctFraction);
+        choicesDiv.appendChild(btn);
+      }
+    }
+
+    function generateVisual(whole, numerator, denominator) {
+      var visualDiv = document.getElementById("visual");
+      visualDiv.innerHTML = "";
+
+      for (var i = 0; i < whole; i++) {
+        var line = document.createElement("div");
+        line.className = "line";
+        for (var j = 0; j < denominator; j++) {
+          var segment = document.createElement("div");
+          segment.className = "segment";
+          segment.style.backgroundColor = "lightgray";
+          line.appendChild(segment);
+        }
+        visualDiv.appendChild(line);
+      }
+
+      var fractionalLine = document.createElement("div");
+      fractionalLine.className = "line";
+      for (var k = 0; k < denominator; k++) {
+        var fracSegment = document.createElement("div");
+        fracSegment.className = "segment";
+        if (k < numerator) {
+          fracSegment.style.backgroundColor = "lightgray";
+        }
+        fractionalLine.appendChild(fracSegment);
+      }
+      visualDiv.appendChild(fractionalLine);
+    }
+
+    function shuffleArray(array) {
+      for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+    }
+
+    window.onload = function() {
+      generateQuestion();
+    };
+  </script>
+</body>
+</html>
